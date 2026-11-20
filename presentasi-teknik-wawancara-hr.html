@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Teknik Wawancara HR: CBI &amp; BBI</title>
+<style>
+  :root{
+    --blue:#0B1F3A; --blue2:#1D3D6B; --blue3:#E8EEF7;
+    --orange:#FF7A1A; --orange2:#FFB273; --orange3:#FFF1E6;
+    --cream:#FFFDF9; --ink:#1B2433; --muted:#5B6678; --line:#E3E8F0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:#0a1322;overflow:hidden;font-family:"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--ink)}
+
+  /* ---------- Stage 16:9 ---------- */
+  #stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform-origin:center center;}
+  .slide{position:absolute;inset:0;background:var(--cream);overflow:hidden;opacity:0;pointer-events:none;transition:opacity .5s ease}
+  .slide.active{opacity:1;pointer-events:auto}
+  .slide.dark{background:var(--blue);color:#fff}
+  .pad{position:absolute;inset:0;padding:70px 96px}
+
+  .topbar{position:absolute;top:44px;left:96px;right:96px;display:flex;justify-content:space-between;align-items:center;font-size:20px;color:var(--muted);letter-spacing:.5px}
+  .tag{background:var(--orange3);color:var(--orange);font-weight:700;padding:8px 18px;border-radius:999px;font-size:18px;letter-spacing:1px;text-transform:uppercase}
+  .dark .tag{background:rgba(255,122,26,.18);color:var(--orange2)}
+  h1{font-size:64px;line-height:1.1;color:var(--blue);font-weight:800;margin-top:84px}
+  .dark h1{color:#fff}
+  h2{font-size:46px;color:var(--blue);font-weight:800;line-height:1.15}
+  .dark h2{color:#fff}
+  .lead{font-size:26px;color:var(--muted);margin-top:14px;max-width:1100px;line-height:1.5}
+  .accent{color:var(--orange)}
+  .card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:30px 34px;box-shadow:0 10px 30px rgba(11,31,58,.06)}
+  .card h3{font-size:28px;color:var(--blue);margin-bottom:10px}
+  .card p,.card li{font-size:22px;line-height:1.5;color:var(--ink)}
+  .card ul{padding-left:24px}
+  .card li{margin-bottom:6px}
+  .foot{position:absolute;bottom:34px;left:96px;right:96px;display:flex;justify-content:space-between;font-size:18px;color:var(--muted)}
+
+  /* ---------- Entrance animations ---------- */
+  .anim{opacity:0;transform:translateY(26px)}
+  .slide.active .anim{animation:rise .75s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:var(--d,0s)}
+  @keyframes rise{to{opacity:1;transform:none}}
+  .slide.active .pop{animation:pop .6s cubic-bezier(.3,1.4,.5,1) forwards;animation-delay:var(--d,0s);opacity:0}
+  @keyframes pop{0%{opacity:0;transform:scale(.6)}100%{opacity:1;transform:scale(1)}}
+  .slide.active .slideL{animation:slideL .7s ease forwards;animation-delay:var(--d,0s);opacity:0}
+  @keyframes slideL{from{opacity:0;transform:translateX(-60px)}to{opacity:1;transform:none}}
+  .slide.active .slideR{animation:slideR .7s ease forwards;animation-delay:var(--d,0s);opacity:0}
+  @keyframes slideR{from{opacity:0;transform:translateX(60px)}to{opacity:1;transform:none}}
+
+  /* ---------- Motion graphics ---------- */
+  .blob{position:absolute;border-radius:50%;filter:blur(2px);opacity:.5;animation:float 7s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0) translateX(0)}50%{transform:translateY(-30px) translateX(14px)}}
+  .spin{animation:spin 16s linear infinite;transform-origin:center}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .bob{animation:bob 2.6s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  .bubble{animation:bubble 2.4s ease-in-out infinite;transform-origin:center}
+  @keyframes bubble{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+  .blink{animation:blink 4s infinite;transform-origin:center}
+  @keyframes blink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
+  .dash{stroke-dasharray:10 10;animation:dash 1.2s linear infinite}
+  @keyframes dash{to{stroke-dashoffset:-40}}
+  .draw{stroke-dasharray:600;stroke-dashoffset:600}
+  .slide.active .draw{animation:draw 1.6s ease forwards;animation-delay:.3s}
+  @keyframes draw{to{stroke-dashoffset:0}}
+
+  /* bars chart */
+  .bars{display:flex;flex-direction:column;gap:26px;margin-top:20px}
+  .brow{display:grid;grid-template-columns:330px 1fr 90px;align-items:center;gap:20px;font-size:22px}
+  .btrack{height:44px;background:var(--blue3);border-radius:12px;overflow:hidden}
+  .bfill{height:100%;width:0;border-radius:12px;background:linear-gradient(90deg,var(--blue2),var(--blue))}
+  .bfill.o{background:linear-gradient(90deg,var(--orange2),var(--orange))}
+  .slide.active .bfill{animation:grow 1.4s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:var(--d,.4s)}
+  @keyframes grow{to{width:var(--w)}}
+  .bval{font-weight:800;color:var(--blue);font-size:26px;text-align:right}
+
+  /* progress */
+  #progress{position:absolute;left:0;bottom:0;height:6px;background:var(--orange);width:0;transition:width .4s;z-index:20}
+  #nav{position:fixed;bottom:14px;right:16px;display:flex;gap:10px;z-index:30;opacity:.55;transition:opacity .3s}
+  #nav:hover{opacity:1}
+  #nav button{background:var(--blue);color:#fff;border:0;border-radius:10px;padding:8px 16px;font-size:16px;cursor:pointer}
+  #counter{color:#fff;font-size:16px;align-self:center;margin:0 6px}
+
+  /* table do/dont */
+  .grid5{display:grid;grid-template-columns:230px 1fr 1fr;gap:12px;margin-top:26px}
+  .hd{font-weight:800;font-size:20px;letter-spacing:1px;text-transform:uppercase;padding:12px 0;color:var(--muted)}
+  .topic{background:var(--blue);color:#fff;border-radius:14px;padding:18px 20px;font-size:24px;font-weight:700;display:flex;align-items:center;gap:12px}
+  .do,.dont{border-radius:14px;padding:16px 22px;font-size:20px;line-height:1.4;display:flex;align-items:center;gap:12px}
+  .do{background:#EAF7EE;color:#1d5c35;border-left:6px solid #2e9e5b}
+  .dont{background:#FDECEC;color:#7a1f1f;border-left:6px solid #d64545}
+  .mark{font-weight:900;font-size:24px}
+
+  .pill{display:inline-block;padding:8px 16px;border-radius:999px;font-size:18px;font-weight:700}
+  .stepn{width:56px;height:56px;border-radius:50%;background:var(--orange);color:#fff;font-weight:800;font-size:26px;display:flex;align-items:center;justify-content:center;flex:none}
+  .qbox{background:#fff;border:1px solid var(--line);border-left:8px solid var(--orange);border-radius:16px;padding:22px 28px;display:flex;gap:22px;align-items:flex-start}
+  .qbox p{font-size:24px;line-height:1.4}
+  .qbox small{display:block;font-size:17px;color:var(--muted);margin-top:8px}
+  .photo{width:100%;height:100%;border-radius:22px;background:linear-gradient(135deg,var(--blue2),var(--blue));display:flex;align-items:flex-end;justify-content:flex-start;padding:22px;color:#fff;font-size:18px;position:relative;overflow:hidden}
+  .photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .photo span{position:relative;background:rgba(0,0,0,.35);padding:8px 14px;border-radius:10px}
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- ============ SLIDE 1: COVER ============ -->
+  <section class="slide dark active" data-title="Pembuka">
+    <div class="blob" style="width:420px;height:420px;background:var(--orange);right:-120px;top:-120px;opacity:.25"></div>
+    <div class="blob" style="width:260px;height:260px;background:var(--blue2);left:-80px;bottom:-80px;animation-delay:-3s"></div>
+    <div class="blob" style="width:90px;height:90px;background:var(--orange2);right:380px;bottom:120px;animation-delay:-1.5s"></div>
+
+    <div class="pad">
+      <div class="topbar" style="color:#9fb3d1"><span class="anim" style="--d:.1s">Modul Pelatihan HR</span><span class="anim" style="--d:.2s">Rekrutmen &amp; Seleksi</span></div>
+      <div class="anim" style="--d:.3s;margin-top:150px"><span class="tag">Trainer Session</span></div>
+      <h1 class="anim" style="--d:.45s;font-size:88px;margin-top:24px;max-width:900px">Teknik Wawancara <span class="accent">HR</span>: CBI &amp; BBI</h1>
+      <p class="lead anim" style="--d:.7s;color:#c7d4ea;max-width:880px">Memahami wawancara berbasis kompetensi dan perilaku, dari dasar hingga praktik langsung.</p>
+
+      <!-- illustration: interviewer & candidate -->
+      <svg class="anim" style="--d:.9s;position:absolute;right:110px;top:190px" width="560" height="500" viewBox="0 0 560 500">
+        <!-- desk -->
+        <rect x="60" y="340" width="440" height="22" rx="10" fill="#FF7A1A"/>
+        <rect x="90" y="362" width="18" height="110" fill="#1D3D6B"/>
+        <rect x="452" y="362" width="18" height="110" fill="#1D3D6B"/>
+        <!-- interviewer (left) -->
+        <g class="bob">
+          <rect x="100" y="210" width="120" height="130" rx="50" fill="#FFB273"/>
+          <rect x="112" y="220" width="96" height="120" rx="40" fill="#fff"/>
+          <circle cx="160" cy="170" r="56" fill="#F5C9A0"/>
+          <path d="M104 160 Q160 92 216 160 Q206 124 160 118 Q114 124 104 160Z" fill="#1B2433"/>
+          <circle class="blink" cx="140" cy="172" r="6" fill="#1B2433"/>
+          <circle class="blink" cx="180" cy="172" r="6" fill="#1B2433"/>
+          <path d="M142 200 Q160 214 178 200" stroke="#1B2433" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <rect x="128" y="250" width="64" height="56" rx="6" fill="#0B1F3A"/>
+          <rect x="136" y="262" width="48" height="6" fill="#FF7A1A"/>
+          <rect x="136" y="274" width="34" height="6" fill="#FFB273"/>
+        </g>
+        <!-- speech bubble -->
+        <g class="bubble" style="transform-box:fill-box">
+          <ellipse cx="290" cy="90" rx="78" ry="48" fill="#fff" stroke="#0B1F3A" stroke-width="3"/>
+          <text x="290" y="106" text-anchor="middle" font-size="54" font-weight="800" fill="#FF7A1A" font-family="Segoe UI,Arial">?</text>
+          <path d="M240 128 L226 152 L262 136" fill="#fff" stroke="#0B1F3A" stroke-width="3"/>
+        </g>
+        <!-- candidate (right) -->
+        <g class="bob" style="animation-delay:-1.2s">
+          <rect x="340" y="210" width="120" height="130" rx="50" fill="#FF7A1A"/>
+          <circle cx="400" cy="170" r="56" fill="#E8B48A"/>
+          <path d="M344 166 Q400 104 456 166 Q440 130 400 126 Q360 130 344 166Z" fill="#0B1F3A"/>
+          <circle class="blink" cx="380" cy="172" r="6" fill="#1B2433"/>
+          <circle class="blink" cx="420" cy="172" r="6" fill="#1B2433"/>
+          <path d="M382 202 Q400 216 418 202" stroke="#1B2433" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <rect x="360" y="262" width="80" height="60" rx="6" fill="#fff" stroke="#0B1F3A" stroke-width="3"/>
+        </g>
+        <!-- spinning badge -->
+        <g class="spin" style="transform-box:fill-box;transform-origin:center">
+          <circle cx="480" cy="60" r="0" fill="none"/>
+        </g>
+        <circle cx="500" cy="60" r="34" fill="#FF7A1A" class="pop" style="--d:1.3s"/>
+        <text x="500" y="70" text-anchor="middle" font-size="26" font-weight="800" fill="#fff" font-family="Segoe UI,Arial">CBI</text>
+        <circle cx="60" cy="130" r="28" fill="#2c5590" class="pop" style="--d:1.5s"/>
+        <text x="60" y="139" text-anchor="middle" font-size="20" font-weight="800" fill="#fff" font-family="Segoe UI,Arial">BBI</text>
+      </svg>
+    </div>
+    <div class="foot" style="color:#7f95b8"><span>Durasi ±90 menit</span><span>← → untuk navigasi</span></div>
+  </section>
+
+  <!-- ============ SLIDE 2: CBI vs BBI ============ -->
+  <section class="slide" data-title="CBI & BBI">
+    <div class="pad">
+      <div class="topbar"><span class="tag">01 · Perkenalan Kembali</span><span>Teknik Wawancara</span></div>
+      <h2 class="anim" style="--d:.1s;margin-top:70px">CBI &amp; BBI: dua istilah yang sering <span class="accent">tertukar</span></h2>
+      <p class="lead anim" style="--d:.2s">Keduanya sama-sama wawancara terstruktur, tetapi fokusnya berbeda.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:36px;margin-top:40px">
+        <div class="card slideL" style="--d:.35s;border-top:10px solid var(--blue)">
+          <div style="display:flex;align-items:center;gap:18px;margin-bottom:12px">
+            <div class="pop" style="--d:.5s;width:78px;height:78px;border-radius:20px;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800">CBI</div>
+            <h3 style="margin:0">Competency-Based Interview</h3>
+          </div>
+          <p><b>Wawancara berbasis kompetensi.</b> Pertanyaan disusun dari kompetensi yang dibutuhkan posisi, misalnya <i>komunikasi, integritas, orientasi hasil</i>.</p>
+          <ul style="margin-top:12px">
+            <li>Diturunkan dari analisis jabatan (job analysis)</li>
+            <li>Menilai <b>apa yang dimiliki</b> kandidat</li>
+            <li>Dinilai dengan skala rubrik 1–5</li>
+          </ul>
+        </div>
+        <div class="card slideR" style="--d:.5s;border-top:10px solid var(--orange)">
+          <div style="display:flex;align-items:center;gap:18px;margin-bottom:12px">
+            <div class="pop" style="--d:.65s;width:78px;height:78px;border-radius:20px;background:var(--orange);color:#fff;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800">BBI</div>
+            <h3 style="margin:0">Behavioral-Based Interview</h3>
+          </div>
+          <p><b>Wawancara berbasis perilaku.</b> Kandidat diminta menceritakan <i>pengalaman nyata</i> di masa lalu, dengan prinsip <i>past behavior predicts future behavior</i>.</p>
+          <ul style="margin-top:12px">
+            <li>Contoh: <i>"Ceritakan saat Anda menghadapi target yang tidak realistis."</i></li>
+            <li>Menggali cerita dengan metode <b>STAR</b></li>
+            <li>Paling efektif untuk menilai kompetensi</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="anim" style="--d:.8s;position:absolute;left:96px;right:96px;bottom:90px;background:var(--blue);color:#fff;border-radius:18px;padding:22px 30px;font-size:24px;display:flex;gap:18px;align-items:center">
+        <span class="stepn" style="background:#fff;color:var(--blue)">✓</span>
+        <span><b>Kesimpulan praktis:</b> BBI adalah <i>cara bertanya</i> di dalam kerangka CBI. Gunakan kompetensi sebagai tujuan, lalu BBI sebagai alatnya.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 3: HR vs USER ============ -->
+  <section class="slide" data-title="HR vs User">
+    <div class="pad">
+      <div class="topbar"><span class="tag">02 · Perbedaan Peran</span><span>HR Interview vs User Interview</span></div>
+      <h2 class="anim" style="--d:.1s;margin-top:70px">Wawancara <span class="accent">HR</span> dan wawancara <span class="accent">User</span> menjawab pertanyaan berbeda</h2>
+
+      <div style="display:grid;grid-template-columns:1fr 150px 1fr;gap:20px;margin-top:44px;align-items:stretch">
+        <div class="card slideL" style="--d:.3s;border-top:10px solid var(--blue)">
+          <h3>🧭 HR Interview</h3>
+          <p style="font-size:21px;color:var(--muted);margin-bottom:10px">Dipimpin HR. Menilai <b>kelayakan &amp; kecocokan</b>.</p>
+          <ul>
+            <li>Motivasi dan ekspektasi karier</li>
+            <li>Nilai &amp; budaya perusahaan (<i>culture fit</i>)</li>
+            <li>Ekspektasi gaji, ketersediaan, lokasi</li>
+            <li>Kelengkapan dokumen &amp; riwayat kerja</li>
+          </ul>
+        </div>
+        <div class="pop" style="--d:.5s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px">
+          <svg width="120" height="120" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="54" fill="var(--orange3)" stroke="#FF7A1A" stroke-width="3"/>
+            <path class="dash" d="M30 60 H90 M76 46 L92 60 L76 74" stroke="#FF7A1A" stroke-width="5" fill="none" stroke-linecap="round"/>
+          </svg>
+          <span style="font-size:20px;color:var(--muted);text-align:center">Keduanya<br>saling melengkapi</span>
+        </div>
+        <div class="card slideR" style="--d:.3s;border-top:10px solid var(--orange)">
+          <h3>🛠️ User Interview</h3>
+          <p style="font-size:21px;color:var(--muted);margin-bottom:10px">Dipimpin atasan langsung / user. Menilai <b>kemampuan teknis</b>.</p>
+          <ul>
+            <li>Kedalaman skill &amp; pengetahuan teknis</li>
+            <li>Studi kasus atau simulasi pekerjaan</li>
+            <li>Cara berpikir &amp; pemecahan masalah</li>
+            <li>Kesiapan langsung untuk peran harian</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="anim" style="--d:.7s;position:absolute;left:96px;right:96px;bottom:90px;display:flex;gap:18px">
+        <span class="pill" style="background:var(--blue3);color:var(--blue)">Urutan ideal: HR screening → User teknis → HR closing</span>
+        <span class="pill" style="background:var(--orange3);color:var(--orange)">Contoh: staf logistik → HR cek ekspektasi, user uji SIM &amp; rute</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 4: DO & DON'T ============ -->
+  <section class="slide" data-title="Do & Don't">
+    <div class="pad">
+      <div class="topbar"><span class="tag">03 · Etika Pewawancara</span><span>5 Do &amp; Don't</span></div>
+      <h2 class="anim" style="--d:.1s;margin-top:70px">Lima hal yang harus <span class="accent">dilakukan</span> dan <span class="accent">dihindari</span></h2>
+
+      <div class="grid5">
+        <div class="hd anim" style="--d:.2s"></div>
+        <div class="hd anim" style="--d:.2s">✔ Do</div>
+        <div class="hd anim" style="--d:.2s">✖ Don't</div>
+
+        <div class="topic anim" style="--d:.3s">🗣️ Tata Bahasa</div>
+        <div class="do anim" style="--d:.35s"><span class="mark">✔</span>Gunakan pertanyaan terbuka: "Ceritakan…", "Bagaimana…"</div>
+        <div class="dont anim" style="--d:.35s"><span class="mark">✖</span>Pertanyaan menggiring: "Anda pasti bisa kerja cepat, kan?"</div>
+
+        <div class="topic anim" style="--d:.45s">🤝 Gesture</div>
+        <div class="do anim" style="--d:.5s"><span class="mark">✔</span>Kontak mata wajar, postur terbuka, senyum hangat</div>
+        <div class="dont anim" style="--d:.5s"><span class="mark">✖</span>Mengetuk pulpen, melirik HP, menyilangkan tangan</div>
+
+        <div class="topic anim" style="--d:.6s">⚖️ Etika</div>
+        <div class="do anim" style="--d:.65s"><span class="mark">✔</span>Jaga kerahasiaan data dan hormati waktu kandidat</div>
+        <div class="dont anim" style="--d:.65s"><span class="mark">✖</span>Menanyakan SARA, status pernikahan, atau rencana kehamilan</div>
+
+        <div class="topic anim" style="--d:.75s">🎯 Objektivitas</div>
+        <div class="do anim" style="--d:.8s"><span class="mark">✔</span>Nilai dengan scorecard, bukan kesan pertama</div>
+        <div class="dont anim" style="--d:.8s"><span class="mark">✖</span>Membandingkan dengan "tipe" pribadi atau latar kampus</div>
+
+        <div class="topic anim" style="--d:.9s">⏱️ Pacing</div>
+        <div class="do anim" style="--d:.95s"><span class="mark">✔</span>Beri kandidat waktu bicara, dengarkan sampai selesai</div>
+        <div class="dont anim" style="--d:.95s"><span class="mark">✖</span>Mendominasi percakapan atau memotong jawaban</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 5: SINGLE vs PANEL ============ -->
+  <section class="slide" data-title="Single vs Panel">
+    <div class="pad">
+      <div class="topbar"><span class="tag">04 · Format Wawancara</span><span>Single vs Panel</span></div>
+      <h2 class="anim" style="--d:.1s;margin-top:70px">Single atau <span class="accent">Panel</span>? Pilih sesuai risiko keputusan</h2>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:34px;margin-top:40px">
+        <div class="card slideL" style="--d:.3s">
+          <div style="display:flex;gap:18px;align-items:center;margin-bottom:12px">
+            <svg width="90" height="90" viewBox="0 0 90 90" class="bob">
+              <circle cx="45" cy="30" r="20" fill="#1D3D6B"/><path d="M15 85 Q45 40 75 85Z" fill="#1D3D6B"/>
+            </svg>
+            <h3 style="margin:0">Single Interview <span style="font-size:20px;color:var(--muted)">(1 pewawancara)</span></h3>
+          </div>
+          <p><b>Kapan dipakai:</b></p>
+          <ul>
+            <li>Screening awal, volume pelamar tinggi</li>
+            <li>Posisi operasional/junior</li>
+            <li>Telepon atau video cepat</li>
+          </ul>
+          <p style="margin-top:12px"><b>Kelebihan:</b> cepat, murah, jadwal mudah.<br><b>Risiko:</b> bias satu orang.</p>
+        </div>
+        <div class="card slideR" style="--d:.5s;border-top:8px solid var(--orange)">
+          <div style="display:flex;gap:18px;align-items:center;margin-bottom:12px">
+            <svg width="120" height="90" viewBox="0 0 120 90" class="bob" style="animation-delay:-1s">
+              <circle cx="30" cy="30" r="16" fill="#FF7A1A"/><path d="M8 80 Q30 42 52 80Z" fill="#FF7A1A"/>
+              <circle cx="66" cy="28" r="16" fill="#0B1F3A"/><path d="M44 80 Q66 40 88 80Z" fill="#0B1F3A"/>
+              <circle cx="100" cy="34" r="14" fill="#FFB273"/><path d="M84 80 Q100 48 116 80Z" fill="#FFB273"/>
+            </svg>
+            <h3 style="margin:0">Panel Interview <span style="font-size:20px;color:var(--muted)">(2–4 pewawancara)</span></h3>
+          </div>
+          <p><b>Kapan dipakai:</b></p>
+          <ul>
+            <li>Posisi supervisor, manajer, atau kunci</li>
+            <li>Keputusan mahal atau sulit dibatalkan</li>
+            <li>Butuh sudut pandang HR, user, dan atasan</li>
+          </ul>
+          <p style="margin-top:12px"><b>Kelebihan:</b> objektif, lebih adil.<br><b>Risiko:</b> intimidasi, pertanyaan tumpang tindih.</p>
+        </div>
+      </div>
+
+      <div class="anim" style="--d:.8s;position:absolute;left:96px;right:96px;bottom:90px;background:var(--orange3);border-radius:18px;padding:20px 28px;font-size:23px;color:var(--ink)">
+        <b style="color:var(--orange)">Tips panel:</b> bagi peran sebelum wawancara (siapa tanya kompetensi apa), dan mulai dengan satu pewawancara sebagai moderator.
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 6: RISET ============ -->
+  <section class="slide" data-title="Dasar Riset">
+    <div class="pad">
+      <div class="topbar"><span class="tag">05 · Framework Riset</span><span>Bukti dari riset 5 tahun terakhir</span></div>
+      <h2 class="anim" style="--d:.1s;margin-top:70px">Wawancara terstruktur terbukti <span class="accent">lebih akurat</span></h2>
+      <p class="lead anim" style="--d:.2s;font-size:23px">Validitas prediktif: seberapa baik hasil wawancara memprediksi kinerja kerja nyata (skala 0–1, makin tinggi makin baik).</p>
+
+      <div class="bars" style="margin-top:34px">
+        <div class="brow anim" style="--d:.3s"><span>Wawancara terstruktur</span><div class="btrack"><div class="bfill o" style="--w:42%;--d:.5s"></div></div><span class="bval">.42</span></div>
+        <div class="brow anim" style="--d:.4s"><span>Wawancara tidak terstruktur</span><div class="btrack"><div class="bfill" style="--w:19%;--d:.6s"></div></div><span class="bval">.19</span></div>
+        <div class="brow anim" style="--d:.5s"><span>Kombinasi tes kemampuan + wawancara terstruktur</span><div class="btrack"><div class="bfill o" style="--w:61%;--d:.7s"></div></div><span class="bval">.61</span></div>
+      </div>
+
+      <div class="anim" style="--d:.8s;position:absolute;left:96px;right:96px;bottom:90px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px">
+        <div class="card" style="padding:20px 24px"><p style="font-size:20px"><b>Sackett dkk. (2022)</b>: validitas wawancara terstruktur tetap tinggi setelah koreksi statistik konservatif.</p></div>
+        <div class="card" style="padding:20px 24px"><p style="font-size:20px"><b>Wingate dkk. (2024)</b>: wawancara juga memprediksi perilaku kontekstual seperti kerja tim.</p></div>
+        <div class="card" style="padding:20px 24px"><p style="font-size:20px"><b>Huffcutt dkk. (2017)</b>: format perilaku (BBI) lebih kuat untuk pekerjaan kompleks/manajerial.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 7: 5 PERTANYAAN DASAR ============ -->
+  <section class="slide" data-title="Template Pertanyaan">
+    <div class="pad">
+      <div class="topbar"><span class="tag">06 · Template Pertanyaan</span><span>5 Pertanyaan Dasar Semua Posisi</span></div>
+      <h2 class="anim" style="--d:.1s;margin-top:70px">Lima pertanyaan dasar untuk <span class="accent">HR interview</span></h2>
+
+      <div style="display:grid;gap:14px;margin-top:30px">
+        <div class="qbox anim" style="--d:.2s"><span class="stepn">1</span><div><p>"Ceritakan singkat tentang diri Anda dan apa yang membuat Anda tertarik pada posisi ini."</p><small>Tujuan: motivasi dan pemahaman peran · Gaya: terbuka (CBI)</small></div></div>
+        <div class="qbox anim" style="--d:.35s"><span class="stepn">2</span><div><p>"Ceritakan pengalaman ketika Anda harus menyelesaikan pekerjaan dengan tenggat yang sangat ketat. Apa yang Anda lakukan?"</p><small>Tujuan: ketahanan tekanan · Gaya: BBI, gunakan STAR</small></div></div>
+        <div class="qbox anim" style="--d:.5s"><span class="stepn">3</span><div><p>"Pernahkah Anda berbeda pendapat dengan rekan kerja? Bagaimana Anda menyelesaikannya?"</p><small>Tujuan: kerja sama dan komunikasi · Gaya: BBI</small></div></div>
+        <div class="qbox anim" style="--d:.65s"><span class="stepn">4</span><div><p>"Apa alasan Anda ingin pindah dari pekerjaan sebelumnya, dan apa yang Anda harapkan dari tempat baru?"</p><small>Tujuan: motivasi dan kesesuaian nilai · Gaya: terbuka</small></div></div>
+        <div class="qbox anim" style="--d:.8s"><span class="stepn">5</span><div><p>"Sebutkan satu kekuatan dan satu hal yang sedang Anda kembangkan. Berikan contoh nyata."</p><small>Tujuan: kesadaran diri dan pembelajaran · Gaya: CBI + contoh</small></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 8: TEMPLATE PRAKTIK ============ -->
+  <section class="slide" data-title="Template Praktik">
+    <div class="pad">
+      <div class="topbar"><span class="tag">07 · Praktik Langsung</span><span>Template STAR &amp; Scorecard</span></div>
+      <h2 class="anim" style="--d:.1s;margin-top:70px">Gunakan <span class="accent">STAR</span> untuk menggali, dan <span class="accent">scorecard</span> untuk menilai</h2>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:34px;margin-top:36px">
+        <div class="card slideL" style="--d:.3s">
+          <h3>⭐ Template Pengorekan STAR</h3>
+          <ul>
+            <li><b>S</b>ituation: Kapan dan di mana kejadiannya?</li>
+            <li><b>T</b>ask: Apa tanggung jawab Anda?</li>
+            <li><b>A</b>ction: Apa langkah <i>Anda</i> secara spesifik?</li>
+            <li><b>R</b>esult: Apa hasilnya? Apa yang dipelajari?</li>
+          </ul>
+          <p style="margin-top:12px;font-size:20px;color:var(--muted)">Pancing: "Apa peran Anda sendiri?" "Angka apa yang berubah?"</p>
+        </div>
+        <div class="card slideR" style="--d:.5s">
+          <h3>📋 Scorecard Rubrik 1–5</h3>
+          <ul>
+            <li><b>1</b> Tidak relevan, tidak ada contoh</li>
+            <li><b>2</b> Contoh lemah, hasil tidak jelas</li>
+            <li><b>3</b> Memadai, ada contoh dan hasil</li>
+            <li><b>4</b> Kuat, peran spesifik dan terukur</li>
+            <li><b>5</b> Sangat kuat, dampak nyata dan refleksi</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="anim" style="--d:.8s;position:absolute;left:96px;right:96px;bottom:90px;background:var(--blue);color:#fff;border-radius:18px;padding:22px 30px;font-size:23px">
+        <b class="accent">Latihan roleplay (15 menit):</b> peserta berpasangan. Satu jadi pewawancara memakai pertanyaan 2 &amp; 3, satu jadi kandidat. Lalu tukar peran dan isi scorecard.
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 9: PHOTO + CLOSING ============ -->
+  <section class="slide dark" data-title="Penutup">
+    <div class="blob" style="width:380px;height:380px;background:var(--orange);left:-120px;bottom:-140px;opacity:.22"></div>
+    <div class="pad">
+      <div class="topbar" style="color:#9fb3d1"><span class="anim" style="--d:.1s">Ringkasan</span><span class="anim" style="--d:.1s">Terima kasih</span></div>
+      <div style="display:grid;grid-template-columns:1fr 620px;gap:60px;margin-top:90px;height:620px">
+        <div>
+          <h1 class="anim" style="--d:.2s;font-size:72px;margin-top:0">Wawancara yang baik itu <span class="accent">terstruktur, adil,</span> dan <span class="accent">manusiawi</span>.</h1>
+          <div class="anim" style="--d:.5s;margin-top:40px;display:grid;gap:16px;font-size:24px;color:#dbe5f5">
+            <div style="display:flex;gap:16px;align-items:center"><span class="stepn">1</span>CBI untuk kompetensi, BBI untuk menggali pengalaman</div>
+            <div style="display:flex;gap:16px;align-items:center"><span class="stepn">2</span>HR menilai kecocokan, user menilai kemampuan</div>
+            <div style="display:flex;gap:16px;align-items:center"><span class="stepn">3</span>Pilih single untuk screening, panel untuk keputusan penting</div>
+            <div style="display:flex;gap:16px;align-items:center"><span class="stepn">4</span>Gunakan scorecard, bukan kesan pertama</div>
+          </div>
+        </div>
+        <div class="slideR" style="--d:.4s">
+          <div class="photo">
+            <!-- Ganti src dengan foto asli ruang wawancara (mis. foto dari Unsplash/Pexels/dokumentasi kantor) -->
+            <img src="" alt="Foto ruang wawancara" onerror="this.remove()">
+            <span>📷 Slot foto nyata: ganti atribut src pada &lt;img&gt;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div id="progress"></div>
+<div id="nav">
+  <button id="prev">◀</button>
+  <span id="counter"></span>
+  <button id="next">▶</button>
+</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  let idx = 0;
+  const counter = document.getElementById('counter');
+  const progress = document.getElementById('progress');
+
+  function fit(){
+    const s = Math.min(window.innerWidth / 1600, window.innerHeight / 900);
+    document.getElementById('stage').style.transform = `translate(-50%,-50%) scale(${s})`;
+  }
+  function show(i){
+    if(i < 0 || i >= slides.length) return;
+    slides[idx].classList.remove('active');
+    idx = i;
+    // restart animations
+    const el = slides[idx];
+    el.classList.remove('active'); void el.offsetWidth; el.classList.add('active');
+    counter.textContent = `${idx+1} / ${slides.length}`;
+    progress.style.width = ((idx+1)/slides.length*100) + '%';
+    history.replaceState(null,'','#'+(idx+1));
+  }
+  document.getElementById('next').onclick = () => show(idx+1);
+  document.getElementById('prev').onclick = () => show(idx-1);
+  document.addEventListener('keydown', e => {
+    if(['ArrowRight','PageDown',' '].includes(e.key)) { e.preventDefault(); show(idx+1); }
+    if(['ArrowLeft','PageUp'].includes(e.key)) { e.preventDefault(); show(idx-1); }
+    if(e.key === 'Home') show(0);
+    if(e.key === 'End') show(slides.length-1);
+  });
+  let tx = null;
+  document.addEventListener('touchstart', e => tx = e.touches[0].clientX);
+  document.addEventListener('touchend', e => {
+    if(tx === null) return;
+    const dx = e.changedTouches[0].clientX - tx;
+    if(dx < -50) show(idx+1); else if(dx > 50) show(idx-1);
+    tx = null;
+  });
+  window.addEventListener('resize', fit);
+  fit();
+  const start = parseInt(location.hash.slice(1)) - 1;
+  show(isNaN(start) ? 0 : Math.max(0, Math.min(slides.length-1, start)));
+  if(isNaN(start)) { counter.textContent = `1 / ${slides.length}`; progress.style.width = (100/slides.length)+'%'; }
+</script>
+</body>
+</html>
